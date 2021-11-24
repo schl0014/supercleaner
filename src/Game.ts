@@ -1,16 +1,19 @@
-class Game {
+import KeyListener from './KeyboardListener.js';
+
+export default class Game {
   // Necessary canvas attributes
   private readonly canvas: HTMLCanvasElement;
+
   private readonly ctx: CanvasRenderingContext2D;
 
   // KeyboardListener so the player can move
-  private keyboardListener: KeyboardListener;
+  private keyboard: KeyListener;
 
   // Garbage items (the player needs to pick these up)
   private garbageItems: any[]; // TODO switch to correct type
 
   // Player
-  private player: any; //TODO switch to correct type
+  private player: any; // TODO switch to correct type
 
   // Amount of frames until the next item
   private countUntilNextItem: number;
@@ -18,35 +21,35 @@ class Game {
   /**
    * Initialize the game
    *
-   * @param {HTMLCanvasElement} canvas - The canvas element that the game
+   * @param canvas - The canvas element that the game
    * should be rendered upon
    */
   public constructor(canvas: HTMLCanvasElement) {
     this.canvas = canvas;
-    this.ctx = this.canvas.getContext("2d");
+    this.ctx = this.canvas.getContext('2d');
 
     this.canvas.width = window.innerWidth;
     this.canvas.height = window.innerHeight;
 
-    this.keyboardListener = new KeyboardListener();
+    this.keyboard = new KeyListener();
 
     this.garbageItems = [];
 
     // Create garbage items
-    for (let i = 0; i < this.randomNumber(3, 10); i++) {
+    for (let i = 0; i < Game.randomNumber(3, 10); i++) {
       this.garbageItems.push({
-        img: this.loadNewImage("./assets/img/icecream.png"),
-        xPos: this.randomNumber(0, this.canvas.width - 32),
-        yPos: this.randomNumber(0, this.canvas.height - 32),
+        img: Game.loadNewImage('./assets/img/icecream.png'),
+        xPos: Game.randomNumber(0, this.canvas.width - 32),
+        yPos: Game.randomNumber(0, this.canvas.height - 32),
       });
     }
 
     // Create player
     this.player = {
-      img: this.loadNewImage("./assets/img/character_robot_walk0.png"),
-      xPos: this.randomNumber(0, this.canvas.width - 76),
+      img: Game.loadNewImage('./assets/img/character_robot_walk0.png'),
+      xPos: Game.randomNumber(0, this.canvas.width - 76),
       xVel: 3,
-      yPos: this.randomNumber(0, this.canvas.height - 92),
+      yPos: Game.randomNumber(0, this.canvas.height - 92),
       yVel: 3,
     };
 
@@ -72,33 +75,33 @@ class Game {
     this.draw();
 
     // Player cleans up garbage
-    if (this.keyboardListener.isKeyDown(KeyboardListener.KEY_SPACE)) {
+    if (this.keyboard.isKeyDown(KeyListener.KEY_SPACE)) {
       this.cleanUpGarbage();
     }
 
     // Show score
     // TODO: fix actual score system
-    this.writeTextToCanvas("Score: 0", 36, 120, 50);
+    this.writeTextToCanvas('Score: 0', 36, 120, 50);
 
     // Create new items if necessary
     if (this.countUntilNextItem === 0) {
-      const choice = this.randomNumber(0, 10);
+      const choice = Game.randomNumber(0, 10);
 
       if (choice < 5) {
         this.garbageItems.push({
-          img: this.loadNewImage("./assets/img/icecream.png"),
-          xPos: this.randomNumber(0, this.canvas.width - 32),
-          yPos: this.randomNumber(0, this.canvas.height - 32),
+          img: Game.loadNewImage('./assets/img/icecream.png'),
+          xPos: Game.randomNumber(0, this.canvas.width - 32),
+          yPos: Game.randomNumber(0, this.canvas.height - 32),
         });
       }
 
       // Reset the timer with a count between 2 and 4 seconds on a
       // decent computer
-      this.countUntilNextItem = this.randomNumber(120, 240);
+      this.countUntilNextItem = Game.randomNumber(120, 240);
     }
 
     // Lower the count until the next item with 1
-    this.countUntilNextItem--;
+    this.countUntilNextItem -= 1;
 
     // Make sure the game actually loops
     requestAnimationFrame(this.loop);
@@ -121,32 +124,32 @@ class Game {
   private movePlayer() {
     // Moving right
     if (
-      this.keyboardListener.isKeyDown(KeyboardListener.KEY_RIGHT) &&
-      this.player.xPos + this.player.img.width < this.canvas.width
+      this.keyboard.isKeyDown(KeyListener.KEY_RIGHT)
+      && this.player.xPos + this.player.img.width < this.canvas.width
     ) {
       this.player.xPos += this.player.xVel;
     }
 
     // Moving left
     if (
-      this.keyboardListener.isKeyDown(KeyboardListener.KEY_LEFT) &&
-      this.player.xPos > 0
+      this.keyboard.isKeyDown(KeyListener.KEY_LEFT)
+      && this.player.xPos > 0
     ) {
       this.player.xPos -= this.player.xVel;
     }
 
     // Moving up
     if (
-      this.keyboardListener.isKeyDown(KeyboardListener.KEY_UP) &&
-      this.player.yPos > 0
+      this.keyboard.isKeyDown(KeyListener.KEY_UP)
+      && this.player.yPos > 0
     ) {
       this.player.yPos -= this.player.yVel;
     }
 
     // Moving down
     if (
-      this.keyboardListener.isKeyDown(KeyboardListener.KEY_DOWN) &&
-      this.player.yPos + this.player.img.height < this.canvas.height
+      this.keyboard.isKeyDown(KeyListener.KEY_DOWN)
+      && this.player.yPos + this.player.img.height < this.canvas.height
     ) {
       this.player.yPos += this.player.yVel;
     }
@@ -158,39 +161,40 @@ class Game {
    * Read for more info about filter function: https://alligator.io/js/filter-array-method/
    */
   private cleanUpGarbage() {
-    //create a new array with garbage item that are still on the screen (filter the clicked garbage item out of the array garbage items)
+    // create a new array with garbage item that are still on the screen
+    // (filter the clicked garbage item out of the array garbage items)
     this.garbageItems = this.garbageItems.filter((element) => {
       // check if the player is over (collided with) the garbage item.
       if (
-        this.player.xPos < element.xPos + element.img.width &&
-        this.player.xPos + this.player.img.width > element.xPos &&
-        this.player.yPos < element.yPos + element.img.height &&
-        this.player.yPos + this.player.img.height > element.yPos
+        this.player.xPos < element.xPos + element.img.width
+        && this.player.xPos + this.player.img.width > element.xPos
+        && this.player.yPos < element.yPos + element.img.height
+        && this.player.yPos + this.player.img.height > element.yPos
       ) {
         // Do not include this item.
         return false;
-      } else {
-        return true;
       }
+      return true;
     });
   }
 
   /**
    * Writes text to the canvas
-   * @param {string} text - Text to write
-   * @param {number} fontSize - Font size in pixels
-   * @param {number} xCoordinate - Horizontal coordinate in pixels
-   * @param {number} yCoordinate - Vertical coordinate in pixels
-   * @param {string} alignment - Where to align the text
-   * @param {string} color - The color of the text
+   *
+   * @param text - Text to write
+   * @param fontSize - Font size in pixels
+   * @param xCoordinate - Horizontal coordinate in pixels
+   * @param yCoordinate - Vertical coordinate in pixels
+   * @param alignment - Where to align the text
+   * @param color - The color of the text
    */
   private writeTextToCanvas(
     text: string,
     fontSize: number = 20,
     xCoordinate: number,
     yCoordinate: number,
-    alignment: CanvasTextAlign = "center",
-    color: string = "white"
+    alignment: CanvasTextAlign = 'center',
+    color: string = 'white',
   ) {
     this.ctx.font = `${fontSize}px sans-serif`;
     this.ctx.fillStyle = color;
@@ -200,10 +204,11 @@ class Game {
 
   /**
    * Method to load an image
-   * @param {HTMLImageElement} source
-   * @return HTMLImageElement - returns an image
+   *
+   * @param source the source
+   * @returns HTMLImageElement - returns an image
    */
-  private loadNewImage(source: string): HTMLImageElement {
+  private static loadNewImage(source: string): HTMLImageElement {
     const img = new Image();
     img.src = source;
     return img;
@@ -211,19 +216,12 @@ class Game {
 
   /**
    * Returns a random number between min and max
-   * @param {number} min - lower boundary
-   * @param {number} max - upper boundary
+   *
+   * @param min - lower boundary
+   * @param max - upper boundary
+   * @returns a random number between min and max
    */
-  private randomNumber(min: number, max: number): number {
+  private static randomNumber(min: number, max: number): number {
     return Math.round(Math.random() * (max - min) + min);
   }
 }
-
-/**
- * Start the game whenever the entire DOM is loaded
- */
-let init = () =>
-  new Game(document.getElementById("canvas") as HTMLCanvasElement);
-
-// Add EventListener to load the game whenever the browser is ready
-window.addEventListener("load", init);
