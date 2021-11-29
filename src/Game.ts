@@ -1,4 +1,4 @@
-import KeyListener from './KeyboardListener.js';
+import KeyListener from './KeyListener.js';
 
 export default class Game {
   // Necessary canvas attributes
