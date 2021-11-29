@@ -12,4 +12,13 @@ export default class Garbage extends GameItem {
     super('./assets/img/icecream.png', maxX - 32, maxY - 32);
     this.score = 1;
   }
+
+  /**
+   * getScore
+   *
+   * @returns the score
+   */
+  public getScore(): number {
+    return this.score;
+  }
 }

@@ -1,11 +1,14 @@
 import GameLoop from './GameLoop.js';
 import Level from './Level.js';
+import PlayerData from './PlayerData.js';
 
 export default class Game {
   // Necessary canvas attributes
   public readonly canvas: HTMLCanvasElement;
 
   public readonly ctx: CanvasRenderingContext2D;
+
+  public playerData: PlayerData;
 
   private gameLoop: GameLoop;
 
@@ -21,6 +24,8 @@ export default class Game {
 
     this.canvas.width = window.innerWidth;
     this.canvas.height = window.innerHeight;
+
+    this.playerData = new PlayerData();
 
     // Start the game cycle
     this.gameLoop = new GameLoop();

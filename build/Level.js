@@ -19,7 +19,13 @@ export default class Level extends Scene {
         return new Garbage(this.game.canvas.width, this.game.canvas.height);
     }
     cleanUpGarbage() {
-        this.garbageItems = this.garbageItems.filter((element) => !this.player.collidesWith(element));
+        this.garbageItems = this.garbageItems.filter((element) => {
+            const collides = this.player.collidesWith(element);
+            if (collides) {
+                this.game.playerData.addScore(element.getScore());
+            }
+            return !collides;
+        });
     }
     processInput() {
         this.player.move(this.game.canvas);
@@ -40,7 +46,8 @@ export default class Level extends Scene {
     }
     render() {
         this.game.ctx.clearRect(0, 0, this.game.canvas.width, this.game.canvas.height);
-        this.game.writeTextToCanvas('Score: 0', 36, 120, 50);
+        const score = `Score: ${this.game.playerData.getScore()}`;
+        this.game.writeTextToCanvas(score, 36, 120, 50);
         this.garbageItems.forEach((element) => {
             element.draw(this.game.ctx);
         });

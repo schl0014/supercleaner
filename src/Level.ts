@@ -47,7 +47,13 @@ export default class Level extends Scene {
     // create a new array with garbage item that are still on the screen
     // (filter the clicked garbage item out of the array garbage items)
     this.garbageItems = this.garbageItems.filter(
-      (element) => !this.player.collidesWith(element),
+      (element) => {
+        const collides = this.player.collidesWith(element);
+        if (collides) {
+          this.game.playerData.addScore(element.getScore());
+        }
+        return !collides;
+      },
     );
   }
 
@@ -107,7 +113,8 @@ export default class Level extends Scene {
     this.game.ctx.clearRect(0, 0, this.game.canvas.width, this.game.canvas.height);
     // Show score
     // TODO: fix actual score system
-    this.game.writeTextToCanvas('Score: 0', 36, 120, 50);
+    const score = `Score: ${this.game.playerData.getScore()}`;
+    this.game.writeTextToCanvas(score, 36, 120, 50);
 
     this.garbageItems.forEach((element) => {
       element.draw(this.game.ctx);
