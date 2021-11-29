@@ -10,7 +10,7 @@ import Game from './Game.js';
  * @author BugSlayer
  */
 export default abstract class Scene {
-  protected game: Game;
+  protected readonly game: Game;
 
   /**
    * Creates a new instance of this class
