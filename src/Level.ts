@@ -81,7 +81,7 @@ export default class Level extends Scene {
       this.cleanUpGarbage();
     }
     // Create new items if necessary
-    if (this.countUntilNextItem === 0) {
+    if (this.countUntilNextItem <= 0) {
       const choice = Game.randomNumber(0, 10);
 
       if (choice < 5) {
@@ -94,7 +94,7 @@ export default class Level extends Scene {
     }
 
     // Lower the count until the next item with 1
-    this.countUntilNextItem -= 1;
+    this.countUntilNextItem -= elapsed;
 
     return null;
   }

@@ -28,14 +28,14 @@ export default class Level extends Scene {
         if (this.player.isCleaning()) {
             this.cleanUpGarbage();
         }
-        if (this.countUntilNextItem === 0) {
+        if (this.countUntilNextItem <= 0) {
             const choice = Game.randomNumber(0, 10);
             if (choice < 5) {
                 this.garbageItems.push(this.createGarbage());
             }
             this.countUntilNextItem = Game.randomNumber(120, 240);
         }
-        this.countUntilNextItem -= 1;
+        this.countUntilNextItem -= elapsed;
         return null;
     }
     render() {
