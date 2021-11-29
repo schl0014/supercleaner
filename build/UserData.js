@@ -5,7 +5,7 @@ export default class UserData {
     constructor() {
         this.level = 0;
         this.score = 0;
-        this.name = UserData.generateName(3);
+        this.name = 'Player 1';
     }
     getName() {
         return this.name;
@@ -24,16 +24,6 @@ export default class UserData {
     }
     increaseLevel() {
         this.level += 1;
-    }
-    static generateName(length) {
-        let result = '';
-        const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-        const charactersLength = characters.length;
-        for (let i = 0; i < length; i++) {
-            result += characters.charAt(Math.floor(Math.random()
-                * charactersLength));
-        }
-        return result;
     }
 }
 //# sourceMappingURL=UserData.js.map

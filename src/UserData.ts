@@ -11,7 +11,7 @@ export default class UserData {
   public constructor() {
     this.level = 0;
     this.score = 0;
-    this.name = UserData.generateName(3);
+    this.name = 'Player 1';
   }
 
   /**
@@ -64,16 +64,5 @@ export default class UserData {
    */
   public increaseLevel(): void {
     this.level += 1;
-  }
-
-  private static generateName(length: number): string {
-    let result = '';
-    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-    const charactersLength = characters.length;
-    for (let i = 0; i < length; i++) {
-      result += characters.charAt(Math.floor(Math.random()
-        * charactersLength));
-    }
-    return result;
   }
 }
