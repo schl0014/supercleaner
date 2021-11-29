@@ -1,9 +1,8 @@
-import KeyListener from './KeyListener.js';
 import Garbage from './Garbage.js';
+import Player from './Player.js';
 export default class Game {
     canvas;
     ctx;
-    keyboard;
     garbageItems;
     player;
     countUntilNextItem;
@@ -12,26 +11,19 @@ export default class Game {
         this.ctx = this.canvas.getContext('2d');
         this.canvas.width = window.innerWidth;
         this.canvas.height = window.innerHeight;
-        this.keyboard = new KeyListener();
         this.garbageItems = [];
         for (let i = 0; i < Game.randomNumber(3, 10); i++) {
             this.garbageItems.push(this.createGarbage());
         }
-        this.player = {
-            img: Game.loadNewImage('./assets/img/character_robot_walk0.png'),
-            xPos: Game.randomNumber(0, this.canvas.width - 76),
-            xVel: 3,
-            yPos: Game.randomNumber(0, this.canvas.height - 92),
-            yVel: 3,
-        };
+        this.player = new Player(this.canvas.width, this.canvas.height);
         this.countUntilNextItem = 300;
         this.loop();
     }
     loop = () => {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-        this.movePlayer();
+        this.player.move(this.canvas);
         this.draw();
-        if (this.keyboard.isKeyDown(KeyListener.KEY_SPACE)) {
+        if (this.player.isCleaning()) {
             this.cleanUpGarbage();
         }
         this.writeTextToCanvas('Score: 0', 36, 120, 50);
@@ -46,42 +38,16 @@ export default class Game {
         requestAnimationFrame(this.loop);
     };
     createGarbage() {
-        return new Garbage(Game.randomNumber(0, this.canvas.width - 32), Game.randomNumber(0, this.canvas.height - 32));
+        return new Garbage(this.canvas.width, this.canvas.height);
     }
     draw() {
         this.garbageItems.forEach((element) => {
             element.draw(this.ctx);
         });
-        this.ctx.drawImage(this.player.img, this.player.xPos, this.player.yPos);
-    }
-    movePlayer() {
-        if (this.keyboard.isKeyDown(KeyListener.KEY_RIGHT)
-            && this.player.xPos + this.player.img.width < this.canvas.width) {
-            this.player.xPos += this.player.xVel;
-        }
-        if (this.keyboard.isKeyDown(KeyListener.KEY_LEFT)
-            && this.player.xPos > 0) {
-            this.player.xPos -= this.player.xVel;
-        }
-        if (this.keyboard.isKeyDown(KeyListener.KEY_UP)
-            && this.player.yPos > 0) {
-            this.player.yPos -= this.player.yVel;
-        }
-        if (this.keyboard.isKeyDown(KeyListener.KEY_DOWN)
-            && this.player.yPos + this.player.img.height < this.canvas.height) {
-            this.player.yPos += this.player.yVel;
-        }
+        this.player.draw(this.ctx);
     }
     cleanUpGarbage() {
-        this.garbageItems = this.garbageItems.filter((element) => {
-            if (this.player.xPos < element.getXPos() + element.getImageWidth()
-                && this.player.xPos + this.player.img.width > element.getXPos()
-                && this.player.yPos < element.getYPos() + element.getImageHeight()
-                && this.player.yPos + this.player.img.height > element.getYPos()) {
-                return false;
-            }
-            return true;
-        });
+        this.garbageItems = this.garbageItems.filter((element) => !this.player.collidesWith(element));
     }
     writeTextToCanvas(text, fontSize = 20, xCoordinate, yCoordinate, alignment = 'center', color = 'white') {
         this.ctx.font = `${fontSize}px sans-serif`;

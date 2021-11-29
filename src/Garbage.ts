@@ -5,11 +5,11 @@ export default class Garbage extends GameItem {
 
   /**
    *
-   * @param xPos the initial X-position
-   * @param yPos the initial Y-position
+   * @param maxX the max value of the X position
+   * @param maxY the max value of the X position
    */
-  public constructor(xPos: number, yPos: number) {
-    super('./assets/img/icecream.png', xPos, yPos);
+  public constructor(maxX: number, maxY: number) {
+    super('./assets/img/icecream.png', maxX - 32, maxY - 32);
     this.score = 1;
   }
 }

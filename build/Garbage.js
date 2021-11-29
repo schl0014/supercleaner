@@ -1,8 +1,8 @@
 import GameItem from './GameItem.js';
 export default class Garbage extends GameItem {
     score;
-    constructor(xPos, yPos) {
-        super('./assets/img/icecream.png', xPos, yPos);
+    constructor(maxX, maxY) {
+        super('./assets/img/icecream.png', maxX - 32, maxY - 32);
         this.score = 1;
     }
 }

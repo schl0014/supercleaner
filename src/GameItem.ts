@@ -8,16 +8,16 @@ export default abstract class GameItem {
   protected yPos: number;
 
   /**
-   * Creates a new instance
+   * Creates a new GameItem on a random position
    *
    * @param imageSrc the src of the image
-   * @param xPos the initial X-position
-   * @param yPos the initial Y-position
+   * @param maxX the max value of the X position
+   * @param maxY the max value of the X position
    */
-  public constructor(imageSrc: string, xPos: number, yPos: number) {
+  public constructor(imageSrc: string, maxX: number, maxY: number) {
     this.img = Game.loadNewImage(imageSrc);
-    this.xPos = xPos;
-    this.yPos = yPos;
+    this.xPos = Game.randomNumber(0, maxX);
+    this.yPos = Game.randomNumber(0, maxY);
   }
 
   /**

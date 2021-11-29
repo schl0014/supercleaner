@@ -1,5 +1,5 @@
-import KeyListener from './KeyListener.js';
 import Garbage from './Garbage.js';
+import Player from './Player.js';
 
 export default class Game {
   // Necessary canvas attributes
@@ -7,14 +7,11 @@ export default class Game {
 
   private readonly ctx: CanvasRenderingContext2D;
 
-  // KeyboardListener so the player can move
-  private keyboard: KeyListener;
-
   // Garbage items (the player needs to pick these up)
-  private garbageItems: Garbage[]; // TODO switch to correct type
+  private garbageItems: Garbage[];
 
   // Player
-  private player: any; // TODO switch to correct type
+  private player: Player;
 
   // Amount of frames until the next item
   private countUntilNextItem: number;
@@ -32,8 +29,6 @@ export default class Game {
     this.canvas.width = window.innerWidth;
     this.canvas.height = window.innerHeight;
 
-    this.keyboard = new KeyListener();
-
     this.garbageItems = [];
 
     // Create garbage items
@@ -42,13 +37,7 @@ export default class Game {
     }
 
     // Create player
-    this.player = {
-      img: Game.loadNewImage('./assets/img/character_robot_walk0.png'),
-      xPos: Game.randomNumber(0, this.canvas.width - 76),
-      xVel: 3,
-      yPos: Game.randomNumber(0, this.canvas.height - 92),
-      yVel: 3,
-    };
+    this.player = new Player(this.canvas.width, this.canvas.height);
 
     // Take about 5 seconds on a decent computer to show next item
     this.countUntilNextItem = 300;
@@ -66,13 +55,13 @@ export default class Game {
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
     // Move the player
-    this.movePlayer();
+    this.player.move(this.canvas);
 
     // Draw everything
     this.draw();
 
     // Player cleans up garbage
-    if (this.keyboard.isKeyDown(KeyListener.KEY_SPACE)) {
+    if (this.player.isCleaning()) {
       this.cleanUpGarbage();
     }
 
@@ -101,10 +90,7 @@ export default class Game {
   };
 
   private createGarbage(): Garbage {
-    return new Garbage(
-      Game.randomNumber(0, this.canvas.width - 32),
-      Game.randomNumber(0, this.canvas.height - 32),
-    );
+    return new Garbage(this.canvas.width, this.canvas.height);
   }
 
   /**
@@ -114,45 +100,7 @@ export default class Game {
     this.garbageItems.forEach((element) => {
       element.draw(this.ctx);
     });
-    this.ctx.drawImage(this.player.img, this.player.xPos, this.player.yPos);
-  }
-
-  /**
-   * Moves the player depending on which arrow key is pressed. Player is bound
-   * to the canvas and cannot move outside of it
-   */
-  private movePlayer() {
-    // Moving right
-    if (
-      this.keyboard.isKeyDown(KeyListener.KEY_RIGHT)
-      && this.player.xPos + this.player.img.width < this.canvas.width
-    ) {
-      this.player.xPos += this.player.xVel;
-    }
-
-    // Moving left
-    if (
-      this.keyboard.isKeyDown(KeyListener.KEY_LEFT)
-      && this.player.xPos > 0
-    ) {
-      this.player.xPos -= this.player.xVel;
-    }
-
-    // Moving up
-    if (
-      this.keyboard.isKeyDown(KeyListener.KEY_UP)
-      && this.player.yPos > 0
-    ) {
-      this.player.yPos -= this.player.yVel;
-    }
-
-    // Moving down
-    if (
-      this.keyboard.isKeyDown(KeyListener.KEY_DOWN)
-      && this.player.yPos + this.player.img.height < this.canvas.height
-    ) {
-      this.player.yPos += this.player.yVel;
-    }
+    this.player.draw(this.ctx);
   }
 
   /**
@@ -163,19 +111,9 @@ export default class Game {
   private cleanUpGarbage() {
     // create a new array with garbage item that are still on the screen
     // (filter the clicked garbage item out of the array garbage items)
-    this.garbageItems = this.garbageItems.filter((element) => {
-      // check if the player is over (collided with) the garbage item.
-      if (
-        this.player.xPos < element.getXPos() + element.getImageWidth()
-        && this.player.xPos + this.player.img.width > element.getXPos()
-        && this.player.yPos < element.getYPos() + element.getImageHeight()
-        && this.player.yPos + this.player.img.height > element.getYPos()
-      ) {
-        // Do not include this item.
-        return false;
-      }
-      return true;
-    });
+    this.garbageItems = this.garbageItems.filter(
+      (element) => !this.player.collidesWith(element),
+    );
   }
 
   /**
