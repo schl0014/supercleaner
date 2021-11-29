@@ -15,6 +15,9 @@ export default class Game {
         this.gameLoop = new GameLoop();
         this.gameLoop.start(new Level(this));
     }
+    getUser() {
+        return this.user;
+    }
     writeTextToCanvas(text, fontSize = 20, xCoordinate, yCoordinate, alignment = 'center', color = 'white') {
         this.ctx.font = `${fontSize}px sans-serif`;
         this.ctx.fillStyle = color;

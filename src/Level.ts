@@ -50,7 +50,7 @@ export default class Level extends Scene {
       (element) => {
         const collides = this.player.collidesWith(element);
         if (collides) {
-          this.game.user.addScore(element.getScore());
+          this.game.getUser().addScore(element.getScore());
         }
         return !collides;
       },
@@ -112,7 +112,7 @@ export default class Level extends Scene {
     // Clear the screen
     this.game.ctx.clearRect(0, 0, this.game.canvas.width, this.game.canvas.height);
     // Show score
-    const score = `Score: ${this.game.user.getScore()}`;
+    const score = `Score: ${this.game.getUser().getScore()}`;
     this.game.writeTextToCanvas(score, 36, 120, 50);
 
     this.garbageItems.forEach((element) => {

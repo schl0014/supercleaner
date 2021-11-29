@@ -8,7 +8,7 @@ export default class Game {
 
   public readonly ctx: CanvasRenderingContext2D;
 
-  public user: UserData;
+  private user: UserData;
 
   private gameLoop: GameLoop;
 
@@ -30,6 +30,15 @@ export default class Game {
     // Start the game cycle
     this.gameLoop = new GameLoop();
     this.gameLoop.start(new Level(this));
+  }
+
+  /**
+   * getUser
+   *
+   * @returns the user data
+   */
+  public getUser(): UserData {
+    return this.user;
   }
 
   /**
