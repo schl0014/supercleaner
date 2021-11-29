@@ -1,11 +1,13 @@
 import Game from './Game.js';
 import Scene from './Scene.js';
+import ScoringObject from './ScoringObject.js';
 import Garbage from './Garbage.js';
+import Egg from './Egg.js';
 import Player from './Player.js';
 
 export default class Level extends Scene {
   // Garbage items (the player needs to pick these up)
-  private garbageItems: Garbage[];
+  private scoringObjects: ScoringObject[];
 
   // Player
   private player: Player;
@@ -20,11 +22,11 @@ export default class Level extends Scene {
    */
   public constructor(game: Game) {
     super(game);
-    this.garbageItems = [];
+    this.scoringObjects = [];
 
     // Create garbage items
     for (let i = 0; i < Game.randomNumber(3, 10); i++) {
-      this.garbageItems.push(this.createGarbage());
+      this.scoringObjects.push(this.createScoringObject());
     }
 
     // Create player
@@ -34,19 +36,23 @@ export default class Level extends Scene {
     this.countUntilNextItem = 300;
   }
 
-  private createGarbage(): Garbage {
+  private createScoringObject(): Garbage {
+    const selector = Game.randomNumber(0, 100);
+    if (selector < 25) {
+      return new Egg(this.game.canvas.width, this.game.canvas.height);
+    }
     return new Garbage(this.game.canvas.width, this.game.canvas.height);
   }
 
   /**
-   * Removes garbage items from the game based on box collision detection.
+   * Removes scoring objects from the game based on box collision detection.
    *
    * Read for more info about filter function: https://alligator.io/js/filter-array-method/
    */
-  private cleanUpGarbage() {
+  private cleanUpScoringObjects() {
     // create a new array with garbage item that are still on the screen
     // (filter the clicked garbage item out of the array garbage items)
-    this.garbageItems = this.garbageItems.filter(
+    this.scoringObjects = this.scoringObjects.filter(
       (element) => {
         const collides = this.player.collidesWith(element);
         if (collides) {
@@ -84,14 +90,14 @@ export default class Level extends Scene {
   public update(elapsed: number): Scene {
     // Player cleans up garbage
     if (this.player.isCleaning()) {
-      this.cleanUpGarbage();
+      this.cleanUpScoringObjects();
     }
     // Create new items if necessary
     if (this.countUntilNextItem <= 0) {
       const choice = Game.randomNumber(0, 10);
 
       if (choice < 5) {
-        this.garbageItems.push(this.createGarbage());
+        this.scoringObjects.push(this.createScoringObject());
       }
 
       // Reset the timer with a count between 2 and 4 seconds on a
@@ -115,7 +121,7 @@ export default class Level extends Scene {
     const score = `Score: ${this.game.getUser().getScore()}`;
     this.game.writeTextToCanvas(score, 36, 120, 50);
 
-    this.garbageItems.forEach((element) => {
+    this.scoringObjects.forEach((element) => {
       element.draw(this.game.ctx);
     });
     this.player.draw(this.game.ctx);

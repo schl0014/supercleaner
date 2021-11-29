@@ -1,25 +1,30 @@
 import Game from './Game.js';
 import Scene from './Scene.js';
 import Garbage from './Garbage.js';
+import Egg from './Egg.js';
 import Player from './Player.js';
 export default class Level extends Scene {
-    garbageItems;
+    scoringObjects;
     player;
     countUntilNextItem;
     constructor(game) {
         super(game);
-        this.garbageItems = [];
+        this.scoringObjects = [];
         for (let i = 0; i < Game.randomNumber(3, 10); i++) {
-            this.garbageItems.push(this.createGarbage());
+            this.scoringObjects.push(this.createScoringObject());
         }
         this.player = new Player(this.game.canvas.width, this.game.canvas.height);
         this.countUntilNextItem = 300;
     }
-    createGarbage() {
+    createScoringObject() {
+        const selector = Game.randomNumber(0, 100);
+        if (selector < 25) {
+            return new Egg(this.game.canvas.width, this.game.canvas.height);
+        }
         return new Garbage(this.game.canvas.width, this.game.canvas.height);
     }
-    cleanUpGarbage() {
-        this.garbageItems = this.garbageItems.filter((element) => {
+    cleanUpScoringObjects() {
+        this.scoringObjects = this.scoringObjects.filter((element) => {
             const collides = this.player.collidesWith(element);
             if (collides) {
                 this.game.getUser().addScore(element.getScore());
@@ -32,12 +37,12 @@ export default class Level extends Scene {
     }
     update(elapsed) {
         if (this.player.isCleaning()) {
-            this.cleanUpGarbage();
+            this.cleanUpScoringObjects();
         }
         if (this.countUntilNextItem <= 0) {
             const choice = Game.randomNumber(0, 10);
             if (choice < 5) {
-                this.garbageItems.push(this.createGarbage());
+                this.scoringObjects.push(this.createScoringObject());
             }
             this.countUntilNextItem = Game.randomNumber(120, 240);
         }
@@ -48,7 +53,7 @@ export default class Level extends Scene {
         this.game.ctx.clearRect(0, 0, this.game.canvas.width, this.game.canvas.height);
         const score = `Score: ${this.game.getUser().getScore()}`;
         this.game.writeTextToCanvas(score, 36, 120, 50);
-        this.garbageItems.forEach((element) => {
+        this.scoringObjects.forEach((element) => {
             element.draw(this.game.ctx);
         });
         this.player.draw(this.game.ctx);

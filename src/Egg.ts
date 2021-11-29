@@ -1,6 +1,6 @@
 import ScoringObject from './ScoringObject.js';
 
-export default class Garbage extends ScoringObject {
+export default class Egg extends ScoringObject {
   /**
    * Creates a new instance of this class
    *
@@ -8,6 +8,6 @@ export default class Garbage extends ScoringObject {
    * @param maxY the max value of the X position
    */
   public constructor(maxX: number, maxY: number) {
-    super('./assets/img/icecream.png', maxX - 32, maxY - 32, 1);
+    super('./assets/img/egg.png', maxX - 50, maxY - 64, -5);
   }
 }
