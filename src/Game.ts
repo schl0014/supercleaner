@@ -1,4 +1,5 @@
 import KeyListener from './KeyListener.js';
+import Garbage from './Garbage.js';
 
 export default class Game {
   // Necessary canvas attributes
@@ -10,7 +11,7 @@ export default class Game {
   private keyboard: KeyListener;
 
   // Garbage items (the player needs to pick these up)
-  private garbageItems: any[]; // TODO switch to correct type
+  private garbageItems: Garbage[]; // TODO switch to correct type
 
   // Player
   private player: any; // TODO switch to correct type
@@ -37,11 +38,7 @@ export default class Game {
 
     // Create garbage items
     for (let i = 0; i < Game.randomNumber(3, 10); i++) {
-      this.garbageItems.push({
-        img: Game.loadNewImage('./assets/img/icecream.png'),
-        xPos: Game.randomNumber(0, this.canvas.width - 32),
-        yPos: Game.randomNumber(0, this.canvas.height - 32),
-      });
+      this.garbageItems.push(this.createGarbage());
     }
 
     // Create player
@@ -88,11 +85,7 @@ export default class Game {
       const choice = Game.randomNumber(0, 10);
 
       if (choice < 5) {
-        this.garbageItems.push({
-          img: Game.loadNewImage('./assets/img/icecream.png'),
-          xPos: Game.randomNumber(0, this.canvas.width - 32),
-          yPos: Game.randomNumber(0, this.canvas.height - 32),
-        });
+        this.garbageItems.push(this.createGarbage());
       }
 
       // Reset the timer with a count between 2 and 4 seconds on a
@@ -107,12 +100,19 @@ export default class Game {
     requestAnimationFrame(this.loop);
   };
 
+  private createGarbage(): Garbage {
+    return new Garbage(
+      Game.randomNumber(0, this.canvas.width - 32),
+      Game.randomNumber(0, this.canvas.height - 32),
+    );
+  }
+
   /**
    * Draw all the necessary items to the screen
    */
   private draw() {
     this.garbageItems.forEach((element) => {
-      this.ctx.drawImage(element.img, element.xPos, element.yPos);
+      element.draw(this.ctx);
     });
     this.ctx.drawImage(this.player.img, this.player.xPos, this.player.yPos);
   }
@@ -166,10 +166,10 @@ export default class Game {
     this.garbageItems = this.garbageItems.filter((element) => {
       // check if the player is over (collided with) the garbage item.
       if (
-        this.player.xPos < element.xPos + element.img.width
-        && this.player.xPos + this.player.img.width > element.xPos
-        && this.player.yPos < element.yPos + element.img.height
-        && this.player.yPos + this.player.img.height > element.yPos
+        this.player.xPos < element.getXPos() + element.getImageWidth()
+        && this.player.xPos + this.player.img.width > element.getXPos()
+        && this.player.yPos < element.getYPos() + element.getImageHeight()
+        && this.player.yPos + this.player.img.height > element.getYPos()
       ) {
         // Do not include this item.
         return false;
@@ -208,7 +208,7 @@ export default class Game {
    * @param source the source
    * @returns HTMLImageElement - returns an image
    */
-  private static loadNewImage(source: string): HTMLImageElement {
+  public static loadNewImage(source: string): HTMLImageElement {
     const img = new Image();
     img.src = source;
     return img;
@@ -221,7 +221,7 @@ export default class Game {
    * @param max - upper boundary
    * @returns a random number between min and max
    */
-  private static randomNumber(min: number, max: number): number {
+  public static randomNumber(min: number, max: number): number {
     return Math.round(Math.random() * (max - min) + min);
   }
 }

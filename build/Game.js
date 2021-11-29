@@ -1,4 +1,5 @@
 import KeyListener from './KeyListener.js';
+import Garbage from './Garbage.js';
 export default class Game {
     canvas;
     ctx;
@@ -14,11 +15,7 @@ export default class Game {
         this.keyboard = new KeyListener();
         this.garbageItems = [];
         for (let i = 0; i < Game.randomNumber(3, 10); i++) {
-            this.garbageItems.push({
-                img: Game.loadNewImage('./assets/img/icecream.png'),
-                xPos: Game.randomNumber(0, this.canvas.width - 32),
-                yPos: Game.randomNumber(0, this.canvas.height - 32),
-            });
+            this.garbageItems.push(this.createGarbage());
         }
         this.player = {
             img: Game.loadNewImage('./assets/img/character_robot_walk0.png'),
@@ -41,20 +38,19 @@ export default class Game {
         if (this.countUntilNextItem === 0) {
             const choice = Game.randomNumber(0, 10);
             if (choice < 5) {
-                this.garbageItems.push({
-                    img: Game.loadNewImage('./assets/img/icecream.png'),
-                    xPos: Game.randomNumber(0, this.canvas.width - 32),
-                    yPos: Game.randomNumber(0, this.canvas.height - 32),
-                });
+                this.garbageItems.push(this.createGarbage());
             }
             this.countUntilNextItem = Game.randomNumber(120, 240);
         }
         this.countUntilNextItem -= 1;
         requestAnimationFrame(this.loop);
     };
+    createGarbage() {
+        return new Garbage(Game.randomNumber(0, this.canvas.width - 32), Game.randomNumber(0, this.canvas.height - 32));
+    }
     draw() {
         this.garbageItems.forEach((element) => {
-            this.ctx.drawImage(element.img, element.xPos, element.yPos);
+            element.draw(this.ctx);
         });
         this.ctx.drawImage(this.player.img, this.player.xPos, this.player.yPos);
     }
@@ -78,10 +74,10 @@ export default class Game {
     }
     cleanUpGarbage() {
         this.garbageItems = this.garbageItems.filter((element) => {
-            if (this.player.xPos < element.xPos + element.img.width
-                && this.player.xPos + this.player.img.width > element.xPos
-                && this.player.yPos < element.yPos + element.img.height
-                && this.player.yPos + this.player.img.height > element.yPos) {
+            if (this.player.xPos < element.getXPos() + element.getImageWidth()
+                && this.player.xPos + this.player.img.width > element.getXPos()
+                && this.player.yPos < element.getYPos() + element.getImageHeight()
+                && this.player.yPos + this.player.img.height > element.getYPos()) {
                 return false;
             }
             return true;
