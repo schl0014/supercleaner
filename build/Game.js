@@ -1,17 +1,17 @@
 import GameLoop from './GameLoop.js';
 import Level from './Level.js';
-import PlayerData from './PlayerData.js';
+import UserData from './UserData.js';
 export default class Game {
     canvas;
     ctx;
-    playerData;
+    user;
     gameLoop;
     constructor(canvas) {
         this.canvas = canvas;
         this.ctx = this.canvas.getContext('2d');
         this.canvas.width = window.innerWidth;
         this.canvas.height = window.innerHeight;
-        this.playerData = new PlayerData();
+        this.user = new UserData();
         this.gameLoop = new GameLoop();
         this.gameLoop.start(new Level(this));
     }

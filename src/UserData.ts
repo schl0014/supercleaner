@@ -1,4 +1,4 @@
-export default class PlayerData {
+export default class UserData {
   private name: string;
 
   private score: number;
@@ -11,7 +11,7 @@ export default class PlayerData {
   public constructor() {
     this.level = 0;
     this.score = 0;
-    this.name = PlayerData.generateName(3);
+    this.name = UserData.generateName(3);
   }
 
   /**

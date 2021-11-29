@@ -36,4 +36,4 @@ export default class UserData {
         return result;
     }
 }
-//# sourceMappingURL=PlayerData.js.map
+//# sourceMappingURL=UserData.js.map
