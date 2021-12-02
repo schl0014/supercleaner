@@ -39,6 +39,9 @@ export default class Level extends Scene {
 
   private createScoringObject(): Garbage {
     const selector = Game.randomNumber(0, 100);
+    if (selector < 10) {
+      return new PowerUp(this.game.canvas.width, this.game.canvas.height);
+    }
     if (selector < 25) {
       return new Egg(this.game.canvas.width, this.game.canvas.height);
     }

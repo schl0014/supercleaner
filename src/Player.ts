@@ -28,36 +28,44 @@ export default class Player extends GameItem {
    * @param canvas the canvas to move over, for max x and y positions
    */
   public move(canvas: HTMLCanvasElement): void {
+    // Set the limit values
+    const minX = 0;
+    const maxX = canvas.width - this.img.width;
+    const minY = 0;
+    const maxY = canvas.height - this.img.height;
+
     // Moving right
-    if (
-      this.keyboard.isKeyDown(KeyListener.KEY_RIGHT)
-      && this.xPos + this.img.width < canvas.width
-    ) {
+    if (this.keyboard.isKeyDown(KeyListener.KEY_RIGHT) && this.xPos < maxX) {
       this.xPos += this.xVel;
+      // Limit to the max value
+      if (this.xPos > maxX) {
+        this.xPos = maxX;
+      }
     }
 
     // Moving left
-    if (
-      this.keyboard.isKeyDown(KeyListener.KEY_LEFT)
-      && this.xPos > 0
-    ) {
+    if (this.keyboard.isKeyDown(KeyListener.KEY_LEFT) && this.xPos > minX) {
       this.xPos -= this.xVel;
+      // Limit to the max value
+      if (this.xPos < minX) {
+        this.xPos = minX;
+      }
     }
 
     // Moving up
-    if (
-      this.keyboard.isKeyDown(KeyListener.KEY_UP)
-      && this.yPos > 0
-    ) {
+    if (this.keyboard.isKeyDown(KeyListener.KEY_UP) && this.yPos > minY) {
       this.yPos -= this.yVel;
+      if (this.yPos < minY) {
+        this.yPos = minY;
+      }
     }
 
     // Moving down
-    if (
-      this.keyboard.isKeyDown(KeyListener.KEY_DOWN)
-      && this.yPos + this.img.height < canvas.height
-    ) {
+    if (this.keyboard.isKeyDown(KeyListener.KEY_DOWN) && this.yPos < maxY) {
       this.yPos += this.yVel;
+      if (this.yPos > maxY) {
+        this.yPos = maxY;
+      }
     }
   }
 
