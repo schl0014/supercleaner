@@ -80,4 +80,14 @@ export default class Player extends GameItem {
     && this.yPos < other.getYPos() + other.getImageHeight()
     && this.yPos + this.img.height > other.getYPos();
   }
+
+  /**
+   * Increases the speed
+   *
+   * @param size
+   */
+  increaseSpeed(size: number): void {
+    this.xVel += size;
+    this.yVel += size;
+  }
 }

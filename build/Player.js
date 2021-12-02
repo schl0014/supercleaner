@@ -37,5 +37,9 @@ export default class Player extends GameItem {
             && this.yPos < other.getYPos() + other.getImageHeight()
             && this.yPos + this.img.height > other.getYPos();
     }
+    increaseSpeed(size) {
+        this.xVel += size;
+        this.yVel += size;
+    }
 }
 //# sourceMappingURL=Player.js.map

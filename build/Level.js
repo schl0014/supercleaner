@@ -3,6 +3,7 @@ import Scene from './Scene.js';
 import Garbage from './Garbage.js';
 import Egg from './Egg.js';
 import Player from './Player.js';
+import PowerUp from './PowerUp.js';
 export default class Level extends Scene {
     scoringObjects;
     player;
@@ -28,6 +29,10 @@ export default class Level extends Scene {
             const collides = this.player.collidesWith(element);
             if (collides) {
                 this.game.getUser().addScore(element.getScore());
+                if (element instanceof PowerUp) {
+                    const powerUp = element;
+                    powerUp.applyTo(this.player);
+                }
             }
             return !collides;
         });

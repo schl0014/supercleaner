@@ -4,6 +4,7 @@ import ScoringObject from './ScoringObject.js';
 import Garbage from './Garbage.js';
 import Egg from './Egg.js';
 import Player from './Player.js';
+import PowerUp from './PowerUp.js';
 
 export default class Level extends Scene {
   // Garbage items (the player needs to pick these up)
@@ -57,6 +58,10 @@ export default class Level extends Scene {
         const collides = this.player.collidesWith(element);
         if (collides) {
           this.game.getUser().addScore(element.getScore());
+          if (element instanceof PowerUp) {
+            const powerUp = element as PowerUp;
+            powerUp.applyTo(this.player);
+          }
         }
         return !collides;
       },

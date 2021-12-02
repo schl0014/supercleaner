@@ -1,5 +1,5 @@
 import GameLoop from './GameLoop.js';
-import Level from './Level.js';
+import Start from './Start.js';
 import UserData from './UserData.js';
 
 export default class Game {
@@ -29,7 +29,7 @@ export default class Game {
 
     // Start the game cycle
     this.gameLoop = new GameLoop();
-    this.gameLoop.start(new Level(this));
+    this.gameLoop.start(new Start(this));
   }
 
   /**
