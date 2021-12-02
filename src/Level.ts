@@ -5,6 +5,8 @@ import Garbage from './Garbage.js';
 import Egg from './Egg.js';
 import Player from './Player.js';
 import PowerUp from './PowerUp.js';
+import GameOver from './GameOver.js';
+import LevelUp from './LevelUp.js';
 
 export default class Level extends Scene {
   // Garbage items (the player needs to pick these up)
@@ -71,6 +73,11 @@ export default class Level extends Scene {
     );
   }
 
+  private hasWon(): boolean {
+    const user = this.game.getUser();
+    return user.getScore() >= user.getLevel() * 10;
+  }
+
   /**
    * Handles any user input that has happened since the last call
    */
@@ -115,6 +122,16 @@ export default class Level extends Scene {
 
     // Lower the count until the next item with 1
     this.countUntilNextItem -= elapsed;
+
+    // Move to level clear screen
+    if (this.hasWon()) {
+      return new LevelUp(this.game);
+    }
+
+    // Move to gameover screen
+    if (this.game.getUser().getScore() < 0) {
+      return new GameOver(this.game);
+    }
 
     return null;
   }

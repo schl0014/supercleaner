@@ -6,6 +6,7 @@ export default class Start extends Scene {
     keyboard;
     constructor(game) {
         super(game);
+        game.reset();
         this.keyboard = new KeyListener();
         this.shouldStart = false;
     }

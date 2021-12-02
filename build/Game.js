@@ -11,12 +11,14 @@ export default class Game {
         this.ctx = this.canvas.getContext('2d');
         this.canvas.width = window.innerWidth;
         this.canvas.height = window.innerHeight;
-        this.user = new UserData();
         this.gameLoop = new GameLoop();
         this.gameLoop.start(new Start(this));
     }
     getUser() {
         return this.user;
+    }
+    reset() {
+        this.user = new UserData();
     }
     writeTextToCanvas(text, fontSize = 20, xCoordinate, yCoordinate, alignment = 'center', color = 'white') {
         this.ctx.font = `${fontSize}px sans-serif`;

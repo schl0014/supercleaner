@@ -4,6 +4,8 @@ import Garbage from './Garbage.js';
 import Egg from './Egg.js';
 import Player from './Player.js';
 import PowerUp from './PowerUp.js';
+import GameOver from './GameOver.js';
+import LevelUp from './LevelUp.js';
 export default class Level extends Scene {
     scoringObjects;
     player;
@@ -40,6 +42,10 @@ export default class Level extends Scene {
             return !collides;
         });
     }
+    hasWon() {
+        const user = this.game.getUser();
+        return user.getScore() >= user.getLevel() * 10;
+    }
     processInput() {
         this.player.move(this.game.canvas);
     }
@@ -55,6 +61,12 @@ export default class Level extends Scene {
             this.countUntilNextItem = Game.randomNumber(120, 240);
         }
         this.countUntilNextItem -= elapsed;
+        if (this.hasWon()) {
+            return new LevelUp(this.game);
+        }
+        if (this.game.getUser().getScore() < 0) {
+            return new GameOver(this.game);
+        }
         return null;
     }
     render() {

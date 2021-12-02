@@ -25,8 +25,6 @@ export default class Game {
     this.canvas.width = window.innerWidth;
     this.canvas.height = window.innerHeight;
 
-    this.user = new UserData();
-
     // Start the game cycle
     this.gameLoop = new GameLoop();
     this.gameLoop.start(new Start(this));
@@ -39,6 +37,13 @@ export default class Game {
    */
   public getUser(): UserData {
     return this.user;
+  }
+
+  /**
+   * Resets the game to the starting state.
+   */
+  public reset(): void {
+    this.user = new UserData();
   }
 
   /**
