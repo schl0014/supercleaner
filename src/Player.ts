@@ -84,7 +84,7 @@ export default class Player extends GameItem {
   /**
    * Increases the speed
    *
-   * @param size
+   * @param size the amount of speed to add
    */
   increaseSpeed(size: number): void {
     this.xVel += size;
