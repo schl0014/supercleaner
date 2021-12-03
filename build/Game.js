@@ -1,5 +1,8 @@
 import KeyListener from './KeyListener.js';
+import UserData from './UserData.js';
+import Player from './Player.js';
 export default class Game {
+    user;
     canvas;
     ctx;
     keyboard;
@@ -7,6 +10,8 @@ export default class Game {
     player;
     countUntilNextItem;
     constructor(canvas) {
+        this.player = new Player(50, 50);
+        this.user = new UserData();
         this.canvas = canvas;
         this.ctx = this.canvas.getContext('2d');
         this.canvas.width = window.innerWidth;
@@ -20,24 +25,17 @@ export default class Game {
                 yPos: Game.randomNumber(0, this.canvas.height - 32),
             });
         }
-        this.player = {
-            img: Game.loadNewImage('./assets/img/character_robot_walk0.png'),
-            xPos: Game.randomNumber(0, this.canvas.width - 76),
-            xVel: 3,
-            yPos: Game.randomNumber(0, this.canvas.height - 92),
-            yVel: 3,
-        };
         this.countUntilNextItem = 300;
         this.loop();
     }
     loop = () => {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-        this.movePlayer();
+        this.player.move(this.canvas);
         this.draw();
         if (this.keyboard.isKeyDown(KeyListener.KEY_SPACE)) {
             this.cleanUpGarbage();
         }
-        this.writeTextToCanvas('Score: 0', 36, 120, 50);
+        this.writeTextToCanvas(`Score: ${this.user.getScore()}`, 36, 120, 50);
         if (this.countUntilNextItem === 0) {
             const choice = Game.randomNumber(0, 10);
             if (choice < 5) {
@@ -56,32 +54,15 @@ export default class Game {
         this.garbageItems.forEach((element) => {
             this.ctx.drawImage(element.img, element.xPos, element.yPos);
         });
-        this.ctx.drawImage(this.player.img, this.player.xPos, this.player.yPos);
-    }
-    movePlayer() {
-        if (this.keyboard.isKeyDown(KeyListener.KEY_RIGHT)
-            && this.player.xPos + this.player.img.width < this.canvas.width) {
-            this.player.xPos += this.player.xVel;
-        }
-        if (this.keyboard.isKeyDown(KeyListener.KEY_LEFT)
-            && this.player.xPos > 0) {
-            this.player.xPos -= this.player.xVel;
-        }
-        if (this.keyboard.isKeyDown(KeyListener.KEY_UP)
-            && this.player.yPos > 0) {
-            this.player.yPos -= this.player.yVel;
-        }
-        if (this.keyboard.isKeyDown(KeyListener.KEY_DOWN)
-            && this.player.yPos + this.player.img.height < this.canvas.height) {
-            this.player.yPos += this.player.yVel;
-        }
+        this.player.draw(this.ctx);
     }
     cleanUpGarbage() {
         this.garbageItems = this.garbageItems.filter((element) => {
-            if (this.player.xPos < element.xPos + element.img.width
-                && this.player.xPos + this.player.img.width > element.xPos
-                && this.player.yPos < element.yPos + element.img.height
-                && this.player.yPos + this.player.img.height > element.yPos) {
+            if (this.player.getXPos() < element.xPos + element.img.width
+                && this.player.getXPos() + this.player.getImageWidth() > element.xPos
+                && this.player.getYPos() < element.yPos + element.img.height
+                && this.player.getYPos() + this.player.getImageHeight() > element.yPos) {
+                this.user.addScore(1);
                 return false;
             }
             return true;

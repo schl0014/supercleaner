@@ -1,6 +1,11 @@
 import KeyListener from './KeyListener.js';
+import UserData from './UserData.js';
+import Player from './Player.js';
 
 export default class Game {
+  // import the userdata
+  private user:UserData;
+
   // Necessary canvas attributes
   private readonly canvas: HTMLCanvasElement;
 
@@ -13,7 +18,7 @@ export default class Game {
   private garbageItems: any[]; // TODO switch to correct type
 
   // Player
-  private player: any; // TODO switch to correct type
+  private player: Player;
 
   // Amount of frames until the next item
   private countUntilNextItem: number;
@@ -25,6 +30,8 @@ export default class Game {
    * should be rendered upon
    */
   public constructor(canvas: HTMLCanvasElement) {
+    this.player = new Player(50, 50);
+    this.user = new UserData();
     this.canvas = canvas;
     this.ctx = this.canvas.getContext('2d');
 
@@ -44,14 +51,14 @@ export default class Game {
       });
     }
 
-    // Create player
-    this.player = {
-      img: Game.loadNewImage('./assets/img/character_robot_walk0.png'),
-      xPos: Game.randomNumber(0, this.canvas.width - 76),
-      xVel: 3,
-      yPos: Game.randomNumber(0, this.canvas.height - 92),
-      yVel: 3,
-    };
+    // // Create player
+    // this.player = {
+    //   img: Game.loadNewImage('./assets/img/character_robot_walk0.png'),
+    //   xPos: Game.randomNumber(0, this.canvas.width - 76),
+    //   xVel: 3,
+    //   yPos: Game.randomNumber(0, this.canvas.height - 92),
+    //   yVel: 3,
+    // };
 
     // Take about 5 seconds on a decent computer to show next item
     this.countUntilNextItem = 300;
@@ -69,7 +76,7 @@ export default class Game {
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
     // Move the player
-    this.movePlayer();
+    this.player.move(this.canvas);
 
     // Draw everything
     this.draw();
@@ -81,7 +88,7 @@ export default class Game {
 
     // Show score
     // TODO: fix actual score system
-    this.writeTextToCanvas('Score: 0', 36, 120, 50);
+    this.writeTextToCanvas(`Score: ${this.user.getScore()}`, 36, 120, 50);
 
     // Create new items if necessary
     if (this.countUntilNextItem === 0) {
@@ -114,45 +121,8 @@ export default class Game {
     this.garbageItems.forEach((element) => {
       this.ctx.drawImage(element.img, element.xPos, element.yPos);
     });
-    this.ctx.drawImage(this.player.img, this.player.xPos, this.player.yPos);
-  }
-
-  /**
-   * Moves the player depending on which arrow key is pressed. Player is bound
-   * to the canvas and cannot move outside of it
-   */
-  private movePlayer() {
-    // Moving right
-    if (
-      this.keyboard.isKeyDown(KeyListener.KEY_RIGHT)
-      && this.player.xPos + this.player.img.width < this.canvas.width
-    ) {
-      this.player.xPos += this.player.xVel;
-    }
-
-    // Moving left
-    if (
-      this.keyboard.isKeyDown(KeyListener.KEY_LEFT)
-      && this.player.xPos > 0
-    ) {
-      this.player.xPos -= this.player.xVel;
-    }
-
-    // Moving up
-    if (
-      this.keyboard.isKeyDown(KeyListener.KEY_UP)
-      && this.player.yPos > 0
-    ) {
-      this.player.yPos -= this.player.yVel;
-    }
-
-    // Moving down
-    if (
-      this.keyboard.isKeyDown(KeyListener.KEY_DOWN)
-      && this.player.yPos + this.player.img.height < this.canvas.height
-    ) {
-      this.player.yPos += this.player.yVel;
-    }
+    // this.ctx.drawImage(this.player.img, this.player.getXPos(), this.player.getYPos());
+    this.player.draw(this.ctx);
   }
 
   /**
@@ -166,12 +136,13 @@ export default class Game {
     this.garbageItems = this.garbageItems.filter((element) => {
       // check if the player is over (collided with) the garbage item.
       if (
-        this.player.xPos < element.xPos + element.img.width
-        && this.player.xPos + this.player.img.width > element.xPos
-        && this.player.yPos < element.yPos + element.img.height
-        && this.player.yPos + this.player.img.height > element.yPos
+        this.player.getXPos() < element.xPos + element.img.width
+        && this.player.getXPos() + this.player.getImageWidth() > element.xPos
+        && this.player.getYPos() < element.yPos + element.img.height
+        && this.player.getYPos() + this.player.getImageHeight() > element.yPos
       ) {
-        // Do not include this item.
+        // Do not include this item
+        this.user.addScore(1);
         return false;
       }
       return true;
@@ -208,7 +179,7 @@ export default class Game {
    * @param source the source
    * @returns HTMLImageElement - returns an image
    */
-  private static loadNewImage(source: string): HTMLImageElement {
+  public static loadNewImage(source: string): HTMLImageElement {
     const img = new Image();
     img.src = source;
     return img;
@@ -221,7 +192,7 @@ export default class Game {
    * @param max - upper boundary
    * @returns a random number between min and max
    */
-  private static randomNumber(min: number, max: number): number {
+  public static randomNumber(min: number, max: number): number {
     return Math.round(Math.random() * (max - min) + min);
   }
 }
